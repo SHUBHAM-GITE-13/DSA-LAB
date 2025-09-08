@@ -1,63 +1,54 @@
-undo_stack = []
-redo_stack = []
+class TextEditor:
+    def __init__(self):
+        self.undo_stack = []
+        self.redo_stack = []
+        self.current_state = ""
+    
+    def make_change(self, new_text):
+        self.undo_stack.append(new_text)
+        self.current_state = new_text
+        self.redo_stack.clear()
+        print(f"Change made: '{new_text}'")
+    
+    def undo(self):
+        if not self.undo_stack:
+            print("Nothing to undo.")
+            return
+        last_change = self.undo_stack.pop()
+        self.redo_stack.append(last_change)
+        self.current_state = self.undo_stack[-1] if self.undo_stack else ""
+        print(f"Undo performed. Current state: '{self.current_state}'")
+    
+    def redo(self):
+        if not self.redo_stack:
+            print("Nothing to redo.")
+            return
+        redo_change = self.redo_stack.pop()
+        self.undo_stack.append(redo_change)
+        self.current_state = redo_change
+        print(f"Redo performed. Current state: '{self.current_state}'")
+    
+    def display(self):
+        print(f"Current Document State: '{self.current_state}'")
 
+editor = TextEditor()
 
-def make_change():
-    text = input("Enter the text: ")
-    undo_stack.append(text)
-    redo_stack.clear()
-    print(f"Added: {text}")
-    current_details()
+editor.make_change("Hello")
+editor.make_change("Hello, World")
+editor.make_change("Hello, World!")
 
+editor.display()
 
-def undo_action():
-    if undo_stack:
-        x = undo_stack.pop()
-        redo_stack.append(x)
-        print(f"Undo: Removed '{x}'")
-    else:
-        print("No undo action possible.")
-    current_details()
+editor.undo()
+editor.display()
 
+editor.undo()
+editor.display()
 
-def redo_action():
-    if redo_stack:
-        x = redo_stack.pop()
-        undo_stack.append(x)
-        print(f"Redo: Restored '{x}'")
-    else:
-        print("No redo action possible.")
-    current_details()
+editor.redo()
+editor.display()
 
+editor.make_change("Hello, Universe")
+editor.display()
 
-def current_details():
-    print("\n--- Current Details ---")
-    print("Undo Stack (Current Text):", " ".join(undo_stack) if undo_stack else "[empty]")
-    print("Redo Stack:", " ".join(redo_stack) if redo_stack else "[empty]")
-    print("------------------------\n")
-
-
-# Menu-driven system
-while True:
-    print("--- Enter your choice ---")
-    print("1. Perform make change")
-    print("2. Perform undo action")
-    print("3. Perform redo action")
-    print("4. Display current details")
-    print("5. Exit")
-    choice = int(input("Enter the choice: "))
-
-    match choice:
-        case 1:
-            make_change()
-        case 2:
-            undo_action()
-        case 3:
-            redo_action()
-        case 4:
-            current_details()
-        case 5:
-            print("Exiting Undo-Redo System.")
-            break
-        case _:
-            print("Invalid choice, please enter between 1-5.")
+editor.redo()
