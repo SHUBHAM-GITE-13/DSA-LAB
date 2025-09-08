@@ -1,34 +1,38 @@
-# employee_salary_sort.py
-
-# Sample list of employee salaries
-salaries = [45000.0, 38000.5, 52000.75, 61000.0, 47000.0, 70000.0, 56000.0, 49000.5]
-
-# -------- a) Selection Sort --------
-def selection_sort(salary_list):
-    n = len(salary_list)
+def selection_sort(arr):
+    n = len(arr)
     for i in range(n):
-        min_index = i
-        for j in range(i + 1, n):
-            if salary_list[j] < salary_list[min_index]:
-                min_index = j
-        salary_list[i], salary_list[min_index] = salary_list[min_index], salary_list[i]
-    return salary_list
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
 
-# -------- b) Bubble Sort --------
-def bubble_sort(salary_list):
-    n = len(salary_list)
+def bubble_sort(arr):
+    n = len(arr)
     for i in range(n):
         for j in range(0, n - i - 1):
-            if salary_list[j] > salary_list[j + 1]:
-                salary_list[j], salary_list[j + 1] = salary_list[j + 1], salary_list[j]
-    return salary_list
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-# -------- Run both sorts and display top 5 salaries --------
+def print_top_five_salaries(arr):
+    top_five = arr[-5:] if len(arr) >= 5 else arr
+    print("Top five highest salaries:")
+    for salary in reversed(top_five):
+        print(salary)
 
-# Using Selection Sort
-sorted_salaries_selection = selection_sort(salaries.copy())
-print("Top 5 salaries (Selection Sort):", sorted_salaries_selection[-5:][::-1])
+salaries = [55000.75, 72000.0, 48000.5, 91000.0, 66000.25, 83000.0, 47000.0, 68000.75, 52000.0]
 
-# Using Bubble Sort
-sorted_salaries_bubble = bubble_sort(salaries.copy())
-print("Top 5 salaries (Bubble Sort):", sorted_salaries_bubble[-5:][::-1])
+salaries_selection = salaries.copy()
+salaries_bubble = salaries.copy()
+
+selection_sort(salaries_selection)
+print("After Selection Sort:")
+print(salaries_selection)
+print_top_five_salaries(salaries_selection)
+
+print("\n---------------------\n")
+
+bubble_sort(salaries_bubble)
+print("After Bubble Sort:")
+print(salaries_bubble)
+print_top_five_salaries(salaries_bubble)
