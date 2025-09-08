@@ -1,46 +1,70 @@
-# library_borrow_manager.py
+from collections import Counter
 
-# Simple Library Borrowing Record Manager
+class Library:
+    def __init__(self):
+        self.member_borrow_counts = {}
+        self.book_borrow_counts = {}
 
-# Sample data: Member ID and their list of borrowed books
-library_data = {
-    "M001": ["Book A", "Book B"],
-    "M002": ["Book C"],
-    "M003": [],
-    "M004": ["Book A", "Book A"],
-    "M005": [],
-    "M006": ["Book B", "Book D"]
-}
+    def add_member_borrowing(self, member_id, books_borrowed):
+        if member_id in self.member_borrow_counts:
+            self.member_borrow_counts[member_id] += len(books_borrowed)
+        else:
+            self.member_borrow_counts[member_id] = len(books_borrowed)
+        
+        for book in books_borrowed:
+            if book in self.book_borrow_counts:
+                self.book_borrow_counts[book] += 1
+            else:
+                self.book_borrow_counts[book] = 1
 
-# 1. Average number of books borrowed
-total_members = len(library_data)
-total_books_borrowed = sum(len(books) for books in library_data.values())
-average = total_books_borrowed / total_members
-print("Average books borrowed:", average)
+    def average_books_borrowed(self):
+        if not self.member_borrow_counts:
+            return 0
+        total_books = sum(self.member_borrow_counts.values())
+        total_members = len(self.member_borrow_counts)
+        return total_books / total_members
 
-# 2. Most and least borrowed books
-all_books = []
-for books in library_data.values():
-    all_books.extend(books)
+    def highest_and_lowest_borrowed_books(self):
+        if not self.book_borrow_counts:
+            return None, None
+        
+        highest_book = max(self.book_borrow_counts, key=self.book_borrow_counts.get)
+        lowest_book = min(self.book_borrow_counts, key=self.book_borrow_counts.get)
+        
+        return (highest_book, self.book_borrow_counts[highest_book]), (lowest_book, self.book_borrow_counts[lowest_book])
 
-book_counts = {}
-for book in all_books:
-    if book in book_counts:
-        book_counts[book] += 1
-    else:
-        book_counts[book] = 1
+    def count_members_with_zero_borrowings(self):
+        count = sum(1 for borrowed in self.member_borrow_counts.values() if borrowed == 0)
+        return count
 
-# Most borrowed book
-most_borrowed = max(book_counts, key=book_counts.get)
-print("Most borrowed book:", most_borrowed)
+    def most_frequently_borrowed_book(self):
+        if not self.book_borrow_counts:
+            return None
+        
+        borrow_counts = list(self.book_borrow_counts.values())
+        count_freq = Counter(borrow_counts)
+        max_freq = max(count_freq.values())
+        
+        modes = [book for book, count in self.book_borrow_counts.items() if count_freq[count] == max_freq]
+        
+        return modes, max_freq
 
-# Least borrowed book
-least_borrowed = min(book_counts, key=book_counts.get)
-print("Least borrowed book:", least_borrowed)
 
-# 3. Count members who borrowed 0 books
-zero_borrowers = sum(1 for books in library_data.values() if len(books) == 0)
-print("Members with 0 borrowings:", zero_borrowers)
+library = Library()
 
-# 4. Most frequently borrowed book (mode)
-print("Most frequently borrowed book (mode):", most_borrowed)
+library.add_member_borrowing("member1", ["book1", "book2", "book3"])
+library.add_member_borrowing("member2", ["book2", "book3"])
+library.add_member_borrowing("member3", [])
+library.add_member_borrowing("member4", ["book1"])
+library.add_member_borrowing("member5", ["book3", "book3", "book3"])
+
+print("Average books borrowed:", library.average_books_borrowed())
+
+highest, lowest = library.highest_and_lowest_borrowed_books()
+print(f"Highest borrowed book: {highest}")
+print(f"Lowest borrowed book: {lowest}")
+
+print("Members with zero borrowings:", library.count_members_with_zero_borrowings())
+
+mode_books, freq = library.most_frequently_borrowed_book()
+print(f"Most frequently borrowed book(s): {mode_books} with borrow count frequency: {freq}")
